@@ -1,0 +1,86 @@
+<view isSticky="False" isVisible="true" template="dashboard.html">
+  <label>IIS Activity</label>
+  <description>Production IIS activity</description>
+  <module name="AccountBar" layoutPanel="appHeader"/>
+  <module name="AppBar" layoutPanel="appHeader"/>
+  <module name="SideviewUtils" layoutPanel="appHeader"/>
+  <module name="Message" layoutPanel="messaging">
+    <param name="filter">*</param>
+    <param name="maxSize">2</param>
+    <param name="clearOnJobDispatch">False</param>
+  </module>
+  <module name="HTML" layoutPanel="viewHeader">
+    <param name="html">
+      <![CDATA[<h1>Production IIS Activity</h1>]]>
+    </param>
+  </module>
+  <module name="Search" layoutPanel="panel_row1_col1" group="Top Source IPs" autoRun="True">
+    <param name="latest">@m</param>
+    <param name="group">Top Source IPs</param>
+    <param name="earliest">-60m@m</param>
+    <param name="search">
+      <![CDATA[search index="summary" report="Top_Source_IPs" | top limit=10 c_ip | table c_ip count]]>
+    </param>
+    <module name="HiddenChartFormatter" autoRun="True">
+      <param name="primaryAxisTitle.text">Source IPs</param>
+      <param name="legend.placement">none</param>
+      <param name="chart">bar</param>
+      <module name="FlashChart">
+        <param name="height">300px</param>
+        <module name="Redirector">
+          <param name="arg.earliest">$search.timeRange.earliest$</param>
+          <param name="arg.latest">$search.timeRange.latest$</param>
+          <param name="popup">True</param>
+          <param name="url">flashtimeline</param>
+          <param name="arg.q">index="iislogs" | fields c_ip,cs_host,host,cs_method,cs_Referer_,cs_uri_query,cs_uri_stem,cs_User_Agent_,sc_status,sc_substatus,sc_win32_status | search NOT c_ip="192.168.100.0/24" NOT cs_uri_stem="*loadbalancer*" $click.searchTerms$</param>
+        </module>
+      </module>
+    </module>
+  </module>
+  <module name="Search" layoutPanel="panel_row1_col2" group="Top Hosts" autoRun="True">
+    <param name="search">
+      <![CDATA[search index="summary" report="Top_Hosts" | top limit=10 cs_host | table cs_host count]]>
+    </param>
+    <param name="latest">@m</param>
+    <param name="group">Top Hosts</param>
+    <param name="earliest">-60m@m</param>
+    <module name="HiddenChartFormatter">
+      <param name="legend.placement">none</param>
+      <param name="primaryAxisTitle.text">Hosts</param>
+      <param name="chart">bar</param>
+      <module name="FlashChart">
+        <param name="height">300px</param>
+        <module name="Redirector">
+          <param name="arg.earliest">$search.timeRange.earliest$</param>
+          <param name="arg.latest">$search.timeRange.latest$</param>
+          <param name="popup">True</param>
+          <param name="url">flashtimeline</param>
+          <param name="arg.q">index="iislogs" | fields c_ip,cs_host,host,cs_method,cs_Referer_,cs_uri_query,cs_uri_stem,cs_User_Agent_,sc_status,sc_substatus,sc_win32_status | search NOT c_ip="192.168.100.0/24" NOT cs_uri_stem="*loadbalancer*" $click.searchTerms$</param>
+        </module>
+      </module>
+    </module>
+  </module>
+  <module name="Search" layoutPanel="panel_row2_col1" group="User Agents" autoRun="True">
+    <param name="search">
+      <![CDATA[search index="summary" report="Top_User_Agents" | top limit=10 cs_User_Agent_ | table cs_User_Agent_ count]]>
+    </param>
+    <param name="latest">@m</param>
+    <param name="group">User Agents</param>
+    <param name="earliest">-60m@m</param>
+    <module name="HiddenChartFormatter">
+      <param name="legend.placement">none</param>
+      <param name="primaryAxisTitle.text">Hosts</param>
+      <param name="chart">column</param>
+      <module name="FlashChart">
+        <param name="height">300px</param>
+        <module name="Redirector">
+          <param name="arg.earliest">$search.timeRange.earliest$</param>
+          <param name="arg.latest">$search.timeRange.latest$</param>
+          <param name="popup">True</param>
+          <param name="url">flashtimeline</param>
+          <param name="arg.q">index="iislogs" | fields c_ip,cs_host,host,cs_method,cs_Referer_,cs_uri_query,cs_uri_stem,cs_User_Agent_,sc_status,sc_substatus,sc_win32_status | search NOT c_ip="192.168.100.0/24" NOT cs_uri_stem="*loadbalancer*" $click.searchTerms$</param>
+        </module>
+      </module>
+    </module>
+  </module>
+</view>
